@@ -4,18 +4,18 @@ var defaultProcessors = {
   convertString: require('./handlers/convertString'),
   decodeBase64: require('./handlers/decodeBase64'),
   decompressGzip: require('./handlers/decompressGzip'),
-  //formatCloudfront: require('./handlers/formatCloudfront'),
+  formatCloudfront: require('./handlers/formatCloudfront'),
   formatCloudtrail: require('./handlers/formatCloudtrail'),
   formatCloudwatchLogs: require('./handlers/formatCloudwatchLogs'),
-  //formatConfig: require('./handlers/formatConfig'),
+  formatConfig: require('./handlers/formatConfig'),
   getS3Object: require('./handlers/getS3Object'),
-  //outputJsonLines: require('./handlers/outputJsonLines'),
-  //parseCsv: require('./handlers/parseCsv'),
+  outputJsonLines: require('./handlers/outputJsonLines'),
+  parseCsv: require('./handlers/parseCsv'),
   parseJson: require('./handlers/parseJson'),
-  //parseTabs: require('./handlers/parseTabs'),
+  parseTabs: require('./handlers/parseTabs'),
   shipElasticsearch: require('./handlers/shipElasticsearch'),
-  //shipHttp: require('./handlers/shipHttp'),
-  //shipTcp: require('./handlers/shipTcp')
+  shipHttp: require('./handlers/shipHttp'),
+  shipTcp: require('./handlers/shipTcp')
 };
 
 exports.handler = function(config, event, context, callback) {
