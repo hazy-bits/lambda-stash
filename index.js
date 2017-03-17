@@ -1,5 +1,23 @@
 var _ = require('lodash');
 
+var defaultProcessors = {
+  convertString: require('./handlers/convertString'),
+  decodeBase64: require('./handlers/decodeBase64'),
+  decompressGzip: require('./handlers/decompressGzip'),
+  formatCloudfront: require('./handlers/formatCloudfront'),
+  formatCloudtrail: require('./handlers/formatCloudtrail'),
+  formatCloudwatchLogs: require('./handlers/formatCloudwatchLogs'),
+  formatConfig: require('./handlers/formatConfig'),
+  getS3Object: require('./handlers/getS3Object'),
+  outputJsonLines: require('./handlers/outputJsonLines'),
+  parseCsv: require('./handlers/parseCsv'),
+  parseJson: require('./handlers/parseJson'),
+  parseTabs: require('./handlers/parseTabs'),
+  shipElasticsearch: require('./handlers/shipElasticsearch'),
+  shipHttp: require('./handlers/shipHttp'),
+  shipTcp: require('./handlers/shipTcp')
+};
+
 exports.handler = function(config, event, context, callback) {
   var taskNames = [];
   var eventType = '';
@@ -55,12 +73,13 @@ exports.handler = function(config, event, context, callback) {
       return false;
     }
 
-    try {
-      processor = require('./handlers/' + taskName);
-    } catch (err) {
-      context.fail(err);
+    if (defaultHandlers.hasOwnProperty(taskName)) {
+      processor = defaultHandlers[taskName];
+    } else {
+      context.fail('Missing default processor with ' + taskName + 'name.');
       return true;
     }
+
     if (processor.hasOwnProperty('process')) {
       tasks.push(processor.process);
     }
