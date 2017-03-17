@@ -1,5 +1,23 @@
 var _ = require('lodash');
 
+function extractJson(message) {
+  var jsonStart = message.indexOf('{');
+  if (jsonStart < 0) return null;
+  var jsonString = message.substring(jsonStart);
+
+  var obj;
+  try {
+    obj = JSON.parse(jsonString);
+  } catch(e) {
+    obj = null;
+  }  
+  return obj;
+}
+
+function toNumericIfPossible(n) {
+    return !isNaN(parseFloat(n)) && isFinite(n) ? 1 * n : n;
+}
+
 exports.process = function(config) {
   console.log('formatCloudwatchLogs');
   if (!config.data ||
@@ -30,10 +48,10 @@ exports.process = function(config) {
       parts = item.message.match(/^REPORT RequestId: ([a-z0-9-]+)\tDuration: ([0-9.]+) ms\tBilled Duration: ([0-9.]+) ms \tMemory Size: ([0-9.]+) MB\tMax Memory Used: ([0-9.]+)/); // eslint-disable-line max-len
       if (parts && parts.length === 6) {
         item.requestId = parts[1];
-        item.duration = parts[2];
-        item.durationBilled = parts[3];
-        item.memConfigured = parts[4];
-        item.memUsed = parts[5];
+        item.duration = toNumericIfPossible(parts[2]);
+        item.durationBilled = toNumericIfPossible(parts[3]);
+        item.memConfigured = toNumericIfPossible(parts[4]);
+        item.memUsed = toNumericIfPossible(parts[5]);
       }
     } else if (parts && parts[1] === 'END') {
       item.logType = 'end';
@@ -47,6 +65,11 @@ exports.process = function(config) {
       if (parts && parts.length === 5) {
         item.requestId = parts[2];
         item.message = parts[3];
+
+        jsonValue = extractJson(item.message);
+        if (jsonValue !== null) {
+          item['$message'] = jsonValue;
+        }
       }
     }
 
