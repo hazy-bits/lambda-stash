@@ -73,8 +73,8 @@ exports.handler = function(config, event, context, callback) {
       return false;
     }
 
-    if (defaultHandlers.hasOwnProperty(taskName)) {
-      processor = defaultHandlers[taskName];
+    if (defaultProcessors.hasOwnProperty(taskName)) {
+      processor = defaultProcessors[taskName];
     } else {
       context.fail('Missing default processor with ' + taskName + 'name.');
       return true;
